@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nico3D模型获取工具", "NewRead\Nico3D模型获取工具.csproj", "{E615D505-8AF6-47A4-A87C-EC6885CD9AD8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		生成|Any CPU = 生成|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E615D505-8AF6-47A4-A87C-EC6885CD9AD8}.Debug|Any CPU.ActiveCfg = Release|x86
+		{E615D505-8AF6-47A4-A87C-EC6885CD9AD8}.Debug|Any CPU.Build.0 = Release|x86
+		{E615D505-8AF6-47A4-A87C-EC6885CD9AD8}.生成|Any CPU.ActiveCfg = 生成|Any CPU
+		{E615D505-8AF6-47A4-A87C-EC6885CD9AD8}.生成|Any CPU.Build.0 = 生成|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {053A2F8D-0C20-4619-BE54-DD482103DD3D}
+	EndGlobalSection
+EndGlobal
