@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using PmdFile.Pmd;
 using Pmxfile;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace Nico3D模型获取工具
 {
@@ -38,7 +40,6 @@ namespace Nico3D模型获取工具
 
         private string td_num;
         private readonly HashSet<string> TexList = new HashSet<string>();
-
         public OpenForm()
         {
             InitializeComponent();
@@ -211,7 +212,7 @@ namespace Nico3D模型获取工具
                 {
                     GetWebInfo = false;
                 };
-                Browser.Navigate("http://3d.nicovideo.jp/externals/embedded?id=td" + td_num, "_self", null,
+                Browser.Navigate("https://3d.nicovideo.jp/externals/embedded?id=td" + td_num, "_self", null,
                     "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko");
 
                 Task.Factory.StartNew(() =>
@@ -250,7 +251,7 @@ namespace Nico3D模型获取工具
                                 }
                             });
                             if (DownloadModel.DownloadFile(
-                                $"http://3d.nicovideo.jp/upload/limited_contents/td{td_num}/{MODEL[1].Replace("[1]", "")}.{MODEL[2]}",
+                                $"https://3d.nicovideo.jp/upload/limited_contents/td{td_num}/{MODEL[1].Replace("[1]", "")}.{MODEL[2]}",
                                 out byte[] ModelData))
                             {
                                 if (Decrypt(ModelData))
@@ -262,7 +263,7 @@ namespace Nico3D模型获取工具
                                     {
                                         Invoke(ShowInfo, "", 5);
                                         if (new DownloadHelper().DownloadFile(
-                                            $"http://3d.nicovideo.jp/upload/limited_contents/td{td_num}/{TexInfo.texurl0.Replace("[1]", "")}.{TexInfo.texurl1}",
+                                            $"https://3d.nicovideo.jp/upload/limited_contents/td{td_num}/{TexInfo.texurl0.Replace("[1]", "")}.{TexInfo.texurl1}",
                                             out byte[] TexData))
                                         {
                                             var Addpath = "";
@@ -486,6 +487,10 @@ namespace Nico3D模型获取工具
                     timeout = 536900;
                     saveextsion = "plm";
                     break;
+                case "evrm":
+                    timeout = 9816531;
+                    saveextsion = "vrm";
+                    break;
                 default:
                     var filename = $"{path}\\{MODEL[0].Replace(":", "")}.{MODEL[2]}";
                     if (File.Exists(filename))
@@ -640,8 +645,8 @@ namespace Nico3D模型获取工具
                         if (stra == "work.title")
                             if (getname != "title")
                             {
-                                getname = getname.Replace(":", "").Replace((char) 34, (char) 45);
-                                MODEL[0] = getname;
+                                getname= invalidFileName(getname);
+                                MODEL[0] = getname; 
                                 var dir = new DirectoryInfo(path);
                                 dir.CreateSubdirectory(getname);
                                 path = path + @"\" + getname.Replace(":", "");
@@ -696,15 +701,30 @@ namespace Nico3D模型获取工具
             {
             }
         }
-
+        public string invalidFileName(string fileName)
+        {
+            foreach (char invalidChar in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.Replace(invalidChar.ToString(), "");
+            }
+            return fileName;
+        }
         private bool Downloadjson()
         {
             try
             {
+                //HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(_url);
+                //myRequest.Method = "GET";
+                //myRequest.Proxy = null;
+                //myRequest.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko/20100101 Firefox/11.0";
+                //myRequest.Headers.Add("Accept-Language", "zh-cn,en-us;q=0.8,zh-hk;q=0.6,ja;q=0.4,zh;q=0.2");
+                //myRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+                //HttpWebResponse myResponse = (HttpWebResponse)myRequest.GetResponse();
+                //var RED = new System.IO.StreamReader(myResponse.GetResponseStream(), Encoding.GetEncoding("GB2312")).ReadToEnd();
                 MessageLabel.Text = "正在下载json数据中";
-
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
                 var request =
-                    (HttpWebRequest) WebRequest.Create("http://3d.nicovideo.jp/works/td" + td_num + "/components.json");
+                    (HttpWebRequest) WebRequest.Create("https://3d.nicovideo.jp/works/td" + td_num + "/components.json");
                 request.Method = "GET";
                 var response = (HttpWebResponse) request.GetResponse();
                 JsonStream = response.GetResponseStream();
